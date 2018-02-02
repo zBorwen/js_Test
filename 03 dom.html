@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: "微软雅黑";}
+    </style>
+</head>
+<body>
+    <div>
+        <div id="box">1</div>
+        1
+        2
+        <!-- 1232 -->
+        aaaa
+        <div ></div>
+        <div ></div>
+        <div ></div>
+        <div ></div>
+    </div>
+
+    <div id="xq">
+        1
+        <div></div>
+    </div>
+    <script type="text/javascript">
+        /*
+            isElement               是不是一个元素
+            children
+            childNodes
+            parentNode
+            parentElement
+            firstChild
+            firstElementChild
+            lastChild
+            lastElementChild
+            nextSibling             获取文本
+            nextElementSibling      获取节点  IE678不支持
+            previousSibling
+            previousElementSibling
+
+            offsetWidth
+            offsetHeight
+            clientWidth
+            clientHeight
+            scrollWidth
+            scrollHeight
+
+            offsetLeft
+            offsetTop
+            clientLeft
+            clientTop               获取body的间距不包含内外边距定位
+            offsetParent
+            getBoundingClientRect
+
+            window.pageXoffset      IE9+
+            window.pageYoffset
+            window.scrollX          其他浏览器 IE无效
+            window.scrollY
+            document.body.scrollLeft                谷歌有值    其他0
+            document.body.scrollTop
+            document.documentElement.scrollLeft
+            document.documentElement.scrollTop      谷歌0    其他有值
+
+            document.documentElement.clientWidth
+            document.documentElement.clientHeight
+            document.body.clientWidth
+            document.body.clientHeight              不包含边框 看body的
+            window.innerWidth                       IE9+
+            window.innerHeight
+
+            self / window
+
+            ownerDocument               返回当前文档对象
+
+            document.compatMode         表明当前文档的渲染模式是"混杂模式(BackCompat)"还是"标准规范模式(CSS1Compat)".
+        */
+
+
+        /*
+            isElement
+         */
+        var isEle = function(obj){
+            return !!obj && obj.nodeType === 1;
+        }
+
+        var isElement = function(obj){
+            if(obj && obj.nodeType === 1){
+                if( window.Node && ( obj instanceof Node)){
+                    return true;
+                }
+                try {
+                    var test = document.createElement('div');
+                    test.appendChild(obj);
+                    test.removeChild(obj);
+                } catch(e) {
+                    return false
+                    // statements
+                }
+                return false;
+            };
+        };
+        console.log(isEle({nodeType: 1}))
+        console.log(isElement({nodeType: 1}))
+
+
+        /*
+
+            document.createElement("div") 查找了7次原型链  DOM1 DOM2 DOM3 依次继承属性和方法
+            HTMLDivElement
+            HTMLElement
+            Element
+            Node
+            EventTarget
+            Function
+            Object
+
+         */
+        console.log(Object.getOwnPropertyNames(document.createElement("div").__proto__));
+        console.log(Object.getOwnPropertyNames(document.createElement("div").__proto__.__proto__));
+        console.log(Object.getOwnPropertyNames(document.createElement("div").__proto__.__proto__.__proto__));
+        console.log(Object.getOwnPropertyNames(document.createElement("div").__proto__.__proto__.__proto__.__proto__));
+        console.log(Object.getOwnPropertyNames(document.createElement("div").__proto__.__proto__.__proto__.__proto__.__proto__));
+        console.log(Object.getOwnPropertyNames(document.createElement("div").__proto__.__proto__.__proto__.__proto__.__proto__.__proto__));
+        console.log(document.createElement("div").__proto__.__proto__.__proto__.__proto__.__proto__.__proto__);
+        console.log(document.createElement("div").__proto__.__proto__.__proto__.__proto__.__proto__.__proto__.__proto__);
+
+    </script>
+</body>
+</html>

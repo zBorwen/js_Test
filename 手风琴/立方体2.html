@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: "微软雅黑";}
+        #wrap{width: 808px;height: 300px;margin: 300px auto;position: relative;}
+        #list{width: 808px;height: 300px;perspective:700px;}
+        #list li{width: 200px;height: 300px;float:left;transform-style:preserve-3d;position: relative;transition:1s linear;transform:translateZ(-150px);}
+        #list li div{width: 200px;height: 300px;position: absolute;}
+        #list li div:nth-child(1){bottom: 300px;transform-origin: bottom;transform:translateZ(150px) rotateX(90deg);background: url(img/1.jpg);}
+        #list li div:nth-child(2){top: 300px;transform-origin: top;transform:translateZ(150px) rotateX(-90deg);background: url(img/2.jpg);}
+        #list li div:nth-child(3){transform: translateZ(150px);background: url(img/3.jpg);}
+        #list li div:nth-child(4){transform: translateZ(-150px) rotateX(-180deg);background: url(img/4.jpg);}
+
+        #btn{width: 160px;position: absolute;bottom: 10px;right: 30px;}
+        #btn li{width: 20px;height: 20px;padding: 5px;margin: 5px;float: left;border-radius: 50%;background: pink;color: #fff;text-align: center;line-height: 20px;}
+        #btn li.active{background-color: #8B1CCE}
+    </style>
+</head>
+<body>
+    <div id="wrap">
+        <ul id="list">
+
+        </ul>
+        <ul id="btn">
+            <li class="active">1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>4</li>
+        </ul>
+    </div>
+    <script type="text/javascript">
+        window.onload = function(){
+            var wrap = document.getElementById("wrap"),
+                ww = wrap.offsetWidth,
+                cssDom = document.getElementsByTagName("style")[0],
+                list = document.getElementById("list"),
+                zIndex = 0;
+                init(30);
+
+            var liDoms = list.getElementsByTagName("li"),
+                btnDoms = document.querySelectorAll("#btn li"),
+                timer = null,
+                index = 0;
+
+            for(var i=0;i<btnDoms.length;i++){
+                (function(a){
+                    btnDoms[a].onclick = function(){
+                        active(btnDoms[a],'active');
+
+                        [...liDoms].map(function(item){
+                            item.style.webkitTransform = `translateZ(-150px) rotateX(${a*90}deg)`
+                        });
+                        index = a;
+                    };
+                })(i)
+            };
+
+
+
+            function init(num){
+                var html = '';
+                var liw = ww / num;
+                for(var i=1;i<=num;i++){
+                    html += '<li><div></div><div></div><div></div><div></div></li>';
+                    cssDom.innerHTML += `#list li:nth-child(${i}) div{background-position: -${i*liw}px;}`
+                    cssDom.innerHTML += `#list li:nth-child(${i}){transition:1s ${i/num*0.5}s}`;
+
+                    if(i-1>num/2){
+                        zIndex--;
+                        cssDom.innerHTML += `#list li:nth-child(${i}){z-index:${zIndex}}`;
+                    }
+                }
+                list.innerHTML = html;
+                cssDom.innerHTML += `#list li,#list li div{width:${liw}px}`;
+            };
+
+
+            auto();
+            function auto(){
+                timer = setInterval(function(){
+                    index++;
+                    index %= btnDoms.length;
+                    active(btnDoms[index],'active');
+                    [...liDoms].map(function(item){
+                        item.style.webkitTransform = `translateZ(-150px) rotateX(${index*90}deg)`
+                    });
+                },2500);
+            };
+
+            function active(el,clsName){
+                for(var j=0;j<btnDoms.length;j++){
+                    btnDoms[j].className = '';
+                }
+                el.className = clsName;
+            };
+        }
+    </script>
+</body>
+</html>

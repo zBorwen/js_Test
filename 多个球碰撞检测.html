@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content="Fly">
+    <title>Title</title>
+    <style>
+        *{ margin: 0; padding: 0; font-family:Microsoft yahei,serif;}
+        li{ list-style:none;}
+        .yangshi{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100px;
+            height: 100px;
+            background: red;
+            border-radius: 100%;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        window.requestAnimationFrame = window.requestAnimationFrame || function(a){ return setTimeout(a , 1000/60)};
+        window.cancelAnimationFrame = window.cancelAnimationFrame || clearTimeout;
+        (function(){
+            run( 10 );
+            function run(unm){
+                for (var i = 0; i < unm; i++) {
+                    // 创建球
+                    var obody = document.createElement("div");
+                        obody.className = "yangshi";
+                        obody.style.background = "#333";
+                        // 初始化速度
+                        obody.valleft = Math.floor(Math.random()*15+1);
+                        obody.valtop = Math.floor(Math.random()*15+1);
+                        document.body.appendChild(obody);
+                }
+
+                // 边界 获取所有的球
+                var oyang = document.querySelectorAll(".yangshi");
+                var maxW = document.documentElement.clientWidth - oyang[0].clientWidth,
+                    maxH = document.documentElement.clientHeight - oyang[0].clientHeight;
+
+                window.onresize = function(){
+                    maxW = document.documentElement.clientWidth - oyang[0].clientWidth;
+                    maxH = document.documentElement.clientHeight - oyang[0].clientHeight;
+                };
+
+                auto();
+                function auto(){
+                    for (var i = 0; i < unm; i++) {
+                        for (var j = oyang.length-1; j > i; j--) {
+                            to(oyang[i],oyang[j],i)
+                        }
+
+
+                        // 和边界的判断
+                        form(oyang[i]);
+                    }
+                    requestAnimationFrame(auto);
+                }
+
+                // 和边界的判断
+                function form(ar){
+                    var ayang = ar,
+                        chuleft = ayang.offsetLeft,
+                        chutop = ayang.offsetTop,
+                        left = chuleft + ayang.valleft,
+                        top = chutop + ayang.valtop;
+
+                    if(left >= maxW || left <= 0){
+                        left = Math.min(left,maxW);
+                        left = Math.max(left,0);
+                        ayang.valleft = -ayang.valleft;
+                        // ayang.style.backgroundImage = gaicolor();
+                    }
+                    if(top >= maxH || top <= 0){
+                        top = Math.min(top,maxH);
+                        top = Math.max(top , 0);
+                        ayang.valtop = -ayang.valtop;
+                        // ayang.style.backgroundImage = gaicolor();
+                    }
+                    ayang.style.left =  left + "px";
+                    ayang.style.top = top + "px";
+                }
+
+                // 交换速度
+                function to(obj1,obj2,index){
+                    var ci = fenjie(obj1);
+                    var cj = fenjie(obj2);
+                    // 两个球心的位置
+                    var axzhi = ci.x - cj.x;
+                    var ayzhi = ci.y - cj.y;
+                    // 距离 判断是否碰撞
+                    var add = Math.sqrt(axzhi*axzhi+ayzhi*ayzhi);
+                    // 两个球的半径和
+                    var banj = obj1.offsetWidth/2 + obj2.offsetWidth/2;
+                    //
+                    var ile = obj1.valleft,ito = obj1.valtop,jle = obj2.valleft,jto = obj2.valtop;
+                    //
+                    if (add < banj){
+                        if (!obj1[index] || !obj2[index])return;
+                        //碰撞以后x和y每次加的值转换；
+                        obj1.valleft = jle;
+                        obj1.valtop = jto;
+                        obj2.valleft = ile;
+                        obj2.valtop = ito;
+                        obj1[index] = false;obj2[index] = false;
+                    }else{
+                        obj1[index] = true;obj2[index] = true;
+                    }
+                }
+            }
+            function fenjie(obj){
+                var fen = {};
+                fen.x = obj.offsetLeft+obj.offsetWidth/2;
+                fen.y = obj.offsetTop+obj.offsetHeight/2;
+                return fen;
+            }
+
+        })();
+    </script>
+</body>
+</html>

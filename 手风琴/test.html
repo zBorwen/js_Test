@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: "微软雅黑";}
+        #box{width: 200px;height: 200px;position: relative;border: 1px solid #333;}
+        #box div{position: absolute;background: red}
+    </style>
+</head>
+<body>
+    <div id="box"></div>
+    <script type="text/javascript">
+        var col = 10,
+            row = 10,
+            boxDom = document.getElementById("box"),
+            dW = 202 / 10,
+            dH = 202 / 10,
+            total = col * row,
+            flag = document.createDocumentFragment();
+
+        for(var i=0;i<total;i++){
+            var divDom = document.createElement("div");
+            divDom.x = i;
+            // divDom.y = ;
+            divDom.style.width = dW+'px';
+            divDom.style.height = dH+'px';
+            divDom.style.left = (i%total%row*dW)+'px';
+            divDom.style.top = parseInt(i%total/col)*dH+'px';
+            flag.appendChild(divDom)
+        };
+
+        boxDom.appendChild(flag)
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: "微软雅黑";}
+        .pass{color: green;font-weight: bold;font-size: 20px;}
+        .fail{color: red;font-weight: bold;font-size: 20px;}
+    </style>
+</head>
+<body>
+    <div class="xq" title="Ninja power">忍者</div>
+    <div class="xq" title="secrets">秘密</div>
+    <script type="text/javascript">
+
+        function assert (value, desc) {
+            var div = document.createElement("div");
+            div.className = value?'pass':'fail';
+            div.appendChild(document.createTextNode(desc));
+            document.body.appendChild(div);
+        }
+
+        /**
+         *      cache       保存和元素相关联的数据
+         *      guidCounter 一个用于生成元素GUID的计数器
+         *      expando     一个属性名称,做为元素的GUID储存,添加时间戳,避免与用户定义的名称冲突
+         *      expando : 自定义属性
+         */
+
+
+        // 保存dom信息
+        (function(){
+            // 创建作用域存储对象
+            var cache = {},
+                guidCounter = 1,
+                expando = "data" + (new Date).getTime();
+
+            // 定义getData函数
+            this.getData = function(elem){
+                var guid = elem[expando];
+                if(!guid){
+                    guid = elem[expando] = guidCounter++;
+                    cache[guid] = {};
+                }
+                // 创建对象
+                return cache[guid];
+            };
+
+            // 定义removeData函数
+            this.removeData = function(elem){
+                var guid = elem[expando];
+                if(!guid) return;
+                delete cache[guid];
+                try {
+                    delete elem[expando];
+                }
+                catch (e){
+                    if(elem.removeAttribute){
+                        elem.removeAttribute(expando);
+                    }
+                };
+            }
+        })();
+
+        // 获取对象
+        var elems = document.getElementsByClassName("xq");
+
+        // 赋值数据
+        for(var i=0;i<elems.length;i++){
+            getData(elems[i]).ninja = elems[i].title;
+        }
+
+        // 测试
+        for(var j=0;j<elems.length;j++){
+            assert(getData(elems[j]).ninja === elems[j].title, "Store data is" + getData(elems[j]).ninja);
+        };
+
+        for(var k=0;k<elems.length;k++){
+            removeData(elems[k]);
+            assert(getData(elems[k]).ninja === undefined, "Store data has been distory");
+        };
+    </script>
+</body>
+</html>

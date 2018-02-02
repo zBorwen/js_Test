@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+</head>
+<body>
+    <script type="text/javascript">
+        /*
+        setTimeout(function(){
+            for(var i = 0; i < 10000000; i++){}
+            console.log('timer a');
+        }, 0)
+
+        // 1
+        for(var j = 0; j < 5; j++){
+            console.log(j);
+        }
+
+        setTimeout(function(){
+            console.log('timer b');
+        }, 0)
+
+        function waitFiveSeconds(){
+            var now = (new Date()).getTime();
+            while(((new Date()).getTime() - now) < 5000){}
+            console.log('finished waiting');
+        }
+
+        document.addEventListener('click', function(){
+            console.log('click');
+        })
+
+        // 2
+        console.log('click begin');
+        waitFiveSeconds();
+        */
+
+        /*
+        var date = Date.now();
+        for(var i=0;i<10e8;i++){
+        }
+
+        setTimeout(_=>{
+            console.log(Date.now()-date)
+        }, 1000);
+        */
+
+        // 宏任务微任务
+        /*
+        setTimeout(function (){
+            console.log('定时器开始啦')
+        });
+
+        new Promise (function (resolve){
+            console.log('马上执行for循环啦');
+            for (var i = 0 ; i < 1000000000 ; i++){
+                i == 10e7 && resolve();
+            }
+        }). then (function (){
+             console.log('执行then函数啦')
+        });
+
+        console.log('代码执行结束');
+         */
+
+        for(var i=0;i<10e7;i++){}
+        setTimeout(_=>{console.log("1")},2000)
+        setTimeout(_=>{console.log("2")},0)
+    </script>
+</body>
+</html>

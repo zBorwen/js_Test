@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: "微软雅黑";height: 130vh;}
+        #up,#down{width: 120px;height: 30px;text-align: center;line-height: 30px;position: fixed;right: 10px;top: 330px;background: red;color: #fff;}
+        #down{top: 380px}
+        #wrap{height: 20vh;background: skyblue;margin-top: 100vh;}
+    </style>
+</head>
+<body>
+    <div id="wrap"></div>
+    <div id="up">up</div>
+    <div id="down">down</div>
+    <script type="text/javascript">
+        /*
+            IE 移动端的UC浏览器不支持
+            scrollIntoView
+            scrollIntoViewIfNeeded
+         */
+        var b = document.getElementsByTagName("body")[0];
+        var wrap = document.getElementById("wrap");
+        var up = document.getElementById("up");
+        var down = document.getElementById("down");
+        up.addEventListener('click',function(){
+            // b.scrollIntoView(true);
+            wrap.scrollIntoView({
+                block: 'start',
+                behavior: 'smooth'
+            });
+        });
+
+        down.addEventListener('click',function(){
+            // b.scrollIntoView(false);
+            wrap.scrollIntoView({
+                block: 'end',
+                // auto instant smooth
+                behavior: 'smooth'
+            });
+        });
+    </script>
+</body>
+</html>

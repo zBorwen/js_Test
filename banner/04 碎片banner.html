@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: "微软雅黑";background: #333;}
+        .wrap{width: 960px;height: 480px;margin: 100px auto;position: relative;border-radius: 5px;overflow: hiddn;}
+        .imgBox li{width: 960px;height: 480px;position: absolute;display: none;}
+        .imgBox li img{display: block;width: 100%;height: 100%;}
+        .imgBox li.show{display: block;}
+        .list{width: 960px;height: 480px;position: absolute;perspective: 300;transform-style:preserve-3d}
+        .list li{float: left;}
+        .arrow{width: 80px;height: 60px;text-align: center;line-height: 60px;background: rgba(0,0,0,.3);display: block;position: absolute;top: calc(50% - 40px);color: #fff;font-size: 20px;opacity: 0;transition: all 1s;}
+        .right{right: 0;}
+        .wrap:hover .arrow{opacity: 1}
+        @keyframes move{
+
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <ul class="imgBox">
+            <li class="show"><img src="images/1.jpg" alt=""></li>
+            <li><img src="images/2.jpg" alt=""></li>
+            <li><img src="images/3.jpg" alt=""></li>
+            <li><img src="images/4.jpg" alt=""></li>
+            <li><img src="images/5.jpg" alt=""></li>
+        </ul>
+        <ul class="list"></ul>
+        <a href="javascript:void(0)" class="arrow left">&lt;</a>
+        <a href="javascript:void(0)" class="arrow right">&gt;</a>
+    </div>
+    <script src="jquery.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            /*
+                生成小方块
+                计算每一行列放几个 总共col*row
+
+                每次切换 把上一张图片 碎片了
+             */
+
+            var index = 0;
+            var $imgBox = $('.imgBox');
+            var src = 'images/1.jpg';
+            var len = $imgBox.children().size();
+            $('.left').click(function(){
+                index--;
+                if(index<0)index = len-1;
+                distory(src);
+                active(index);
+            });
+
+            $('.right').click(function(){
+                index++;
+                index %= len;
+                distory(src);
+                active(index);
+            });
+
+
+            function active(index){
+                // 找到当前的 淡入 兄弟节点都淡出
+                $imgBox.find('li').eq(index).fadeIn(2000).siblings().fadeOut(2000);
+                src = $imgBox.children().eq(index).find('img').attr('src');
+            }
+
+
+            function distory(src){
+                // 小方块的宽高
+                var w = 60,
+                    h = 50,
+                    // 一行一列放多少个
+                    cells = Math.floor($imgBox.parent().width() / w),
+                    rows = Math.floor($imgBox.parent().height() / h),
+                    arr = [];
+
+                // 清空上一次
+                $('.list').empty();
+                for(var i=0;i<rows;i++){
+                    for(var j=0;j<cells;j++){
+                        var $li = $('<li></li>');
+                        $li.css({
+                            width: w,
+                            height: h,
+                            background: 'url('+src+')',
+                            backgroundPosition: -(j*w)+'px -'+(i*h)+'px',
+                            backgroundSize: '960px 480px'
+                        });
+                        // $('.list').append($li);
+                        $li.appendTo($('.list'));
+                        arr.push($li);
+                    }
+                };
+
+                var local = [];
+                arr.forEach(item=>{
+                    local.push({left: item.position().left,top: item.position().top});
+                });
+
+                local.forEach((item,index) =>{
+                    arr[index].css({
+                        position: 'absolute',
+                        top: item.top,
+                        left: item.left
+                    })
+
+                    // x  0-15
+                    // y  0-8
+                    arr[index].x = (item.left / w);
+                    arr[index].y = (item.top / h);
+                });
+
+
+                var count = 0;
+                var timer = setInterval(function(){
+                    arr.forEach(item=>{
+                        if(item.x + item.y == count){
+                            // item.animate({left:0,top:0},400)
+                            item.css({
+                                'transform':'translate(-150px,-150px) rotate(60deg)',
+                                'transition':'all 1s ease'
+                            }).fadeOut();
+                        };
+                    });
+                    count++;
+                    if(count>23){
+                        clearInterval(timer);
+                        return;
+                    };
+
+
+                    // if(arr.length === 0)clearInterval(timer);
+                    // var index = Math.floor(Math.random()*arr.length);
+                    // arr[index].animate({left:960*Math.random(),top:480*Math.random()}).fadeOut()
+
+                    // $(arr[index]).css({
+                    //     'transform':`translate(${10*Math.random()}px,${-10*Math.random()}px) scale(0.8)`,
+                    //     'transition' : 'all .5s ease'
+                    // }).delay(100).fadeOut(400);
+
+                    // arr.splice(index,1);
+                },1000/60);
+            };
+
+        });
+    </script>
+</body>
+</html>

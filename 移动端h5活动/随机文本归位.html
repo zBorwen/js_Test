@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>index</title>
+    <meta charset="utf-8">
+    <meta name="Author" content="海牙老师">
+
+    <style type='text/css'>
+        * { margin: 0; padding: 0; }
+
+        ul { list-style: none; }
+
+        html, body { height: 100%; }
+
+        body { justify-content: center; align-items: center; background-color: #cccccc; }
+
+        .flex { display: flex; }
+
+        .flex-column { flex-direction: column; justify-content: space-between; align-items: center; }
+
+        .flex-row { flex-direction: row; justify-content: space-around; align-items: center; }
+
+        .container { position: relative; width: 260px; height: 320px; padding: 30px 0; box-shadow: 0 0 10px #222222; background-color: #ffffff; border-radius: 20px; }
+
+        .jackpot { width: 200px; height: 200px; background: url("images/yao.png") no-repeat center/cover; }
+
+        .jackpot .seed { position: absolute; z-index: 999; top: 30%; left: 45%; width: 40px; height: 40px; background-color: #9fd0eb; color: #ffffff; text-align: center; line-height: 40px; border-radius: 3px; transition: 1s ease-in-out; }
+
+        .jackpot .seed.end { transform: scale(0); }
+
+        ul.character { position: absolute; bottom: 20px; width: 90%; height: 40px; }
+
+        ul.character li { width: 40px; height: 40px; background-color: #eb7c71; color: #ffffff; text-align: center; line-height: 40px; border-radius: 3px;transition:.3s; }
+
+
+    </style>
+
+
+</head>
+<body class="flex">
+<div class="container flex flex-column">
+    <div class="jackpot">
+        <div class="seed">大</div>
+    </div>
+    <ul class="character flex flex-row">
+        <li>兴</li>
+        <li>隆</li>
+        <li>大</li>
+        <li>家</li>
+        <li>庭</li>
+    </ul>
+</div>
+<script>
+
+
+    var aLi = document.querySelectorAll('ul.character li');
+    var container = document.querySelector('.container');
+    var seed = document.querySelector('.seed');
+    var character = ['兴', '隆', '大', '家', '庭'];
+    var COLORS = ['#69D2E7', '#A7DBD8', '#E0E4CC', '#F38630', '#FA6900', '#FF4E50', '#F9D423']; //彩色池子
+
+    init();
+    function init() {
+        seed.innerText = random(character);
+        container.addEventListener('click', function (e) {
+            e = e || window.event;
+            if (e.target.className.toLowerCase() === 'seed') {
+                var item = e.target;
+                tracer.call(item);
+            }
+        }, false)
+    }
+
+    //transitonend兼容性
+    function whichTransitionEvent() {
+        var t,
+            el = document.createElement('surface'),
+            transitions = {
+                'transition': 'transitionend',
+                'OTransition': 'oTransitionEnd',
+                'MozTransition': 'transitionend',
+                'WebkitTransition': 'webkitTransitionEnd'
+            }
+
+        for (t in transitions) {
+            if (el.style[t] !== undefined) {
+                return transitions[t];
+            }
+        }
+    }
+
+    //获取position
+    function getPosition(DOM, parent, position) {
+        var position = position || {L: 0, T: 0}
+        if (DOM == parent)return position;
+        position.L += DOM.offsetLeft;
+        position.T += DOM.offsetTop;
+        return getPosition(DOM.parentNode, parent, position);
+    }
+
+    //目标行动
+    function tracer() {
+        var transitionEvent = whichTransitionEvent();
+        this.style.left = getPosition(sizer(), container).L + 'px';
+        this.style.top = getPosition(sizer(), container).T + 'px';
+        this.classList.add('end');
+        transitionEvent && this.addEventListener(transitionEvent, function () {
+            sizer().style.backgroundColor = random(COLORS);
+            this.parentNode.removeChild(this);
+            this.removeEventListener(transitionEvent, arguments.callee, false)
+        });
+    }
+
+    //目标寻址
+    function sizer() {
+        var ref = seed.innerText;
+        return [].filter.call(aLi, function (item) {
+            return ref == item.innerText;
+        })[0];
+    }
+
+
+    //随机封装
+    function random(min, max) {
+        if (isArray(min)) {
+            return min[Math.floor(Math.random() * min.length)];
+        } else {
+            return min + Math.random() * ( max - min );
+        }
+    }
+
+    //数组判断
+    function isArray(object) {
+        return Object.prototype.toString.call(object) == '[object Array]';
+    }
+
+
+</script>
+</body>
+</html>

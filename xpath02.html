@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;}
+        ul,li{list-style: none;}
+        body{font-family: "微软雅黑";}
+    </style>
+</head>
+<body>
+    <div id="box">
+        <h1>我是h1</h1>
+        <h2>我是h2</h2>
+        <h3>我是h3</h3>
+    </div>
+
+    <a href="#" class="link"></a>
+    <a href="##" class="link"></a>
+    <script type="text/javascript">
+        // 查询 h标签
+
+        // 方式1
+        var allDoms = document.getElementsByTagName("*");
+        for(var i=0,len=allDoms.length;i<len;i++){
+            if(allDoms[i].tagName.match(/^h[1-6]$/i)){
+                // console.log(allDoms[i]);
+            }
+        }
+
+        // 方式2 Traversal
+        var filter = {
+            acceptNode (node){
+                return node.tagName.match(/^h[1-6]$/i) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+            }
+        }
+        var interator = document.createNodeIterator(document.body, NodeFilter.SHOW_ELEMENT, filter, false);
+        var node =interator.nextNode();
+        while(node){
+            // console.log(node);
+            node = interator.nextNode();
+        }
+
+        // 方法3 TreeWalker
+        var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT, filter, false);
+        var nodee = walker.nextNode();
+        while (nodee) {
+            // console.log(nodee);
+            nodee = walker.nextNode();
+        }
+
+
+
+        /*
+            xpath表达式, 返回一个XpathResult
+            var xpathResult = document.evaluate(
+                xpathExpression,
+                contextNode,
+                namespaceResolver,
+                resultType,
+                result
+            )
+
+            xpathExpression 表示要计算的Xpath字符串。
+            contextNode 表示本次查询的上下文节点 。通常会使用document。
+            namespaceResolver 是函数。传入名空间前缀，返回跟此前缀相关的名空间URI（字符串）。通常用来解析Xpath内的前缀，以便对文档进行匹配。HTML文档或者不使用名空间前缀的文档，通常传入null。
+            resultType 是整数。指定所返回的 XPathResult 的类型，常常使用 named constant properties，范围 0 到 9。https://developer.mozilla.org/zh-CN/docs/Web/API/Document/evaluate#Result_types
+            result 为XPathResult型，用以存储查询结果。通常传入null，此时将创建新的XPathResult对象。
+
+            Xpath在IE中的查询函数为 document.selectNodes(xpath)
+            document.selectNodes('//h1|//h2|//h3|//h4|//h5|//h6')
+        */
+
+
+
+        // 方法4 xpath
+        var str = "返回的节点集合: \n";
+        var result = document.evaluate('//h1|//h2|//h3|//h4|//h5|//h6', document, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+        var nodes = result.iterateNext();
+        while (nodes) {
+            // console.log(nodes);
+            str += nodes.innerText+ "\n";
+            nodes = result.iterateNext();
+        }
+        console.log(str)
+        // console.dir(XPathResult)
+
+        function xPath(query) {
+            var result = document.evaluate(query, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null),
+                len = result.snapshotLength,
+                nodeList = Array(len);
+            for(var i = 0; i < len; i++) {
+                nodeList[i] = result.snapshotItem(i);
+            }
+            return nodeList;
+        }
+
+        var res = xPath('//a[@href]');
+        console.log(res)
+    </script>
+</body>
+</html>

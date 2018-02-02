@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: "微软雅黑";height: 130vh;}
+        #up,#center,#down{width: 120px;height: 30px;text-align: center;line-height: 30px;position: fixed;right: 10px;top: 330px;background: red;color: #fff;}
+        #center{top: 380px}
+        #down{top: 430px}
+        #wrap{height: 20vh;background: skyblue;margin-top: 100vh;}
+    </style>
+</head>
+<body>
+    <div id="wrap"></div>
+    <div id="up">up</div>
+    <div id="center">center</div>
+    <div id="down">down</div>
+    <script type="text/javascript">
+        /*
+            scrollIntoViewIfNeeded是比较懒散的,如果元素在可视区域,那么调用它的时候,页面是不会发生滚动的
+            其次是scrollIntoViewIfNeeded只有Boolean型参数,没有动画
+
+            不是全部可见或者全部不可见的情况下,调用scrollIntoViewIfNeeded时,无论参数是true还是false,都会发生滚动
+            而且效果是滚动到元素与可视区域顶部或底部对齐,视乎元素离哪端更近
+         */
+        var wrap = document.getElementById("wrap");
+        var up = document.getElementById("up");
+        var down = document.getElementById("down");
+        up.addEventListener('click',function(){
+            wrap.scrollIntoView(true);
+        });
+
+        center.addEventListener('click',function(){
+            wrap.scrollIntoViewIfNeeded(true);
+        });
+
+        down.addEventListener('click',function(){
+            wrap.scrollIntoViewIfNeeded(false);
+        });
+
+    </script>
+</body>
+</html>

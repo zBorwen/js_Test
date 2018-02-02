@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>lazyload</title>
+  <link rel="stylesheet" href="./normalize.css" />
+  <link rel="stylesheet" href="./index.css" />
+  <script src="./index.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="img-area">
+      <img class="my-photo" alt="loading" data-src="./img/1.jpg">
+    </div>
+    <div class="img-area">
+      <img class="my-photo" alt="loading" data-src="./img/2.png">
+    </div>
+    <div class="img-area">
+      <img class="my-photo" alt="loading" data-src="./img/3.png">
+    </div>
+    <div class="img-area">
+      <img class="my-photo" alt="loading" data-src="./img/4.jpg">
+    </div>
+    <div class="img-area">
+      <img class="my-photo" alt="loading" data-src="./img/5.jpg">
+    </div>
+    <div class="img-area">
+      <img class="my-photo" alt="loading" data-src="./img/6.jpg">
+    </div>
+    <div class="img-area">
+      <img class="my-photo" alt="loading" data-src="./img/7.jpg">
+    </div>
+    <div class="img-area">
+      <img class="my-photo" alt="loading" data-src="./img/8.jpg">
+    </div>
+    <div class="img-area">
+      <img class="my-photo" alt="loading" data-src="./img/9.jpg">
+    </div>
+    <div class="img-area">
+      <img class="my-photo" alt="loading" data-src="./img/10.jpg">
+    </div>
+  </div>
+  <script>
+    /*
+      window.IntersectionObserver()
+    */
+
+    window.onload = checkImgs;
+
+    function checkImgs(){
+      const imgs = Array.from(document.querySelectorAll(".my-photo"));
+      imgs.forEach(item=>io.observe(item));
+    }
+
+    function loadImg(el){
+      if(!el.src){
+        const source = el.dataset.src;
+        el.src = source;
+      }
+    }
+
+    const io = new IntersectionObserver(ioes=>{
+      ioes.forEach(ioe=>{
+        const el = ioe.target;
+        const intersectionRatio = ioe.intersectionRatio;
+        if(intersectionRatio > 0 && intersectionRatio <= 1){
+          loadImg(el);
+        };
+        el.onload = el.onerror = () => io.unobserve(el);
+      });
+    });
+
+    /*
+      clientHeight + scrollTop < el.offsetTop
+    */
+    /*
+    window.onload = function(){
+      checkImg()
+    };
+
+    window.onscroll = scroll(checkImg);
+
+    function isShow(el){
+      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      var winH = document.documentElement.clientHeight || window.innerHeight;
+      return winH + scrollTop > offset(el).top + 200
+    }
+
+    function checkImg(){
+      var imgs = document.querySelectorAll(".my-photo");
+      for(var i=0;i<imgs.length;i++){
+        if(!imgs[i].mark && isShow(imgs[i])){
+          imgs[i].src = imgs[i].dataset.src;
+          imgs[i].mark = true;
+        };
+      };
+    };
+
+    function scroll(fn){
+      var date = Date.now();
+      return function(){
+        var now = Date.now();
+        if(now - date > 200){
+          fn();
+        }
+        date = now;
+      };
+    }
+
+    function offset(ele){
+      var cleft = 0;
+      var ctop = 0;
+      while(ele){
+          cleft += ele.offsetLeft;
+          ctop += ele.offsetTop;
+          ele = ele.offsetParent;
+      };
+      return {left:cleft,top:ctop};
+    }
+    */
+
+    /*
+      getBoundingClientRect
+    */
+    /*
+    window.onload=checkImgs;
+    window.onscroll = throttle(checkImgs);
+
+    function isInSight(el) {
+      const bound = el.getBoundingClientRect();
+      const clientHeight = window.innerHeight;
+      //如果只考虑向下滚动加载
+      //const clientWidth=window.innerWeight;
+      return bound.top <= clientHeight - 300;
+    }
+
+    let index = 0;
+    function checkImgs() {
+      const imgs = document.querySelectorAll('.my-photo');
+      for (let i = index; i < imgs.length; i++) {
+        if (isInSight(imgs[i])) {
+          loadImg(imgs[i]);
+          index = i;
+        }
+      }
+      // Array.from(imgs).forEach(el => {
+      //   if (isInSight(el)) {
+      //     loadImg(el);
+      //   }
+      // })
+    }
+
+    function loadImg(el) {
+      if (!el.src) {
+        const source = el.dataset.src;
+        el.src = source;
+      }
+    }
+
+    function throttle(fn, mustRun = 500) {
+      const timer = null;
+      let previous = null;
+      return function() {
+        const now = new Date();
+        const context = this;
+        const args = arguments;
+        if (!previous) {
+          previous = now;
+        }
+        const remaining = now - previous;
+        if (mustRun && remaining >= mustRun) {
+          fn.apply(context, args);
+          previous = now;
+        }
+      }
+    }
+    */
+
+  </script>
+</body>
+
+</html>

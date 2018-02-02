@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: "微软雅黑";}
+        #wrap{width: 760px;height: 340px;margin: 150px auto;position: relative;}
+        #list li{height: 340px;position: absolute;width: 760px;opacity: 0}
+        #list li.active{opacity: 1}
+        #list li div{position: absolute;border: 1px solid transparent;transition: 1s transform , 1.5s opacity;}
+        #list li:nth-child(1) div{background: url(img/5.jpg);background-size: 760px}
+        #list li:nth-child(2) div{background: url(img/2.jpg);background-size: 760px}
+        #list li:nth-child(3) div{background: url(img/3.jpg);background-size: 760px}
+        #list li:nth-child(4) div{background: url(img/4.jpg);background-size: 760px}
+
+        #list li div.start{transform:/*translate(-50px,-50px)*/ rotateY(720deg) scale(0,1);opacity: 0}
+        #list li div.end{transform:/*translate(0px,0px)*/ rotateY(0deg) scale(1);opacity: 0}
+
+        #btn{width: 120px;position: absolute;right: 10px;bottom: 5px;}
+        #btn li{width: 10px;height: 10px;padding: 5px;margin: 5px;float: left;border-radius: 50%;background: skyblue;cursor: pointer;}
+        #btn li.on{background: #B755F6;}
+    </style>
+</head>
+<body>
+    <div id="wrap">
+        <ul id="list">
+            <li class="active"></li>
+            <!-- <li></li>
+            <li></li>
+            <li></li> -->
+        </ul>
+    </div>
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.js"></script>
+    <script type="text/javascript">
+        /*
+            切割
+        */
+        var liDoms = document.querySelectorAll("#list li"),
+            btnDoms = document.querySelectorAll("#btn li"),
+            row = 15,
+            col = 10,
+            liW = liDoms[0].offsetWidth,
+            liH = liDoms[0].offsetHeight,
+            w_ = liW / row,
+            h_ = liH / col,
+            total = row * col,
+            frag = document.createDocumentFragment(),
+            arr = [];
+
+
+        // 初始化样式
+        [...liDoms].forEach( function( item ){
+            var temp = [];
+            for(var i=0,len=total;i<len;i++){
+                var divDom = document.createElement("div");
+                divDom.x = i % row;
+                divDom.y = parseInt(i/row);
+                with(divDom.style){
+                    width = w_ + 'px';
+                    height = h_ + 'px';
+                    left = i%row*w_ + 'px';
+                    top = parseInt(i/row)*h_ + 'px';
+                    backgroundPosition = `${-i%row*w_}px ${-parseInt(i/row)*h_}px`;
+                }
+                frag.appendChild(divDom);
+                // temp中装单独所有的div
+                temp.push(divDom);
+            };
+            item.appendChild(frag);
+            // temp 数组
+            arr.push(temp);
+        });
+
+
+
+    </script>
+</body>
+</html>

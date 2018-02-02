@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;color: #333;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: "微软雅黑";}
+        body{font-size: 14px;font-family: "微软雅黑";-webkit-user-select:none;-moz-user-select:none;user-select:none;}
+        #box{width: 700px;height: 500px;background: #FCF3B4;margin: 30px auto;padding: 20px;font-size: 16px;color: #333;position: relative;overflow: hidden;}
+        .pbold{font-size: 20px;font-weight: bold;font-family: "Vivaldi"}
+        #scrollBar{width: 20px;height: 100%;border-radius:10px;background: linear-gradient(#84E7F4,#F164F4);position: absolute;top: 0;right: 0;}
+        #bar{width: 20px;height: 50px;background: #333;border-radius:10px;position: absolute;top: 0;right;z-index: 2}
+        #b_over{width: 100%;height: 100%;background: transparent;position: absolute;top: 0;right;z-index: 1}
+        #content{position: relative;}
+    </style>
+</head>
+<body>
+    <div id="box">
+        <div id="scrollBar">
+            <div id="bar"></div>
+            <div id="b_over"></div>
+        </div>
+
+        <div id="content">
+            <h2>阿甘正传</h2>
+            <br/>
+            <p class="pbold">1、Life was like a box of chocolates, you never know what you're going to get.</p>
+        　　<p>生命就像一盒巧克力，结果往往出人意料。</p>
+        　　<p class="pbold">2、Stupid is as stupid does.</p>
+        　　<p>蠢人做蠢事，也可理解为傻人有傻福。</p>
+        　　<p class="pbold">3、Miracles happen every day.</p>
+        　　<p>奇迹每天都在发生。</p>
+        　　<p class="pbold">4、it made me look like a duck in water.</p>
+        　　<p>它让我如鱼得水。</p>
+        　　<p class="pbold">5、I don't know if we each have a destiny, or if we're all just floating around accidental—like on a breeze.</p>
+        　　<p>我不懂我们是否有着各自的命运，还是只是到处随风飘荡。</p>
+        　　<p class="pbold">6、Death is just a part of life, something we're all destined to do.</p>
+        　　<p>死亡是生命的一部分，是我们注定要做的一件事。</p>
+        　　<p class="pbold">7、You have got to put the past behind you before you can move on.</p>
+        　　<p>放下包袱，继续前进。</p>
+        　　<p class="pbold">8、It was like just before the sun goes to bed down on the bayou. There was a million sparkles on the river.</p>
+        　　<p>就像太阳在落山前映射在河口上，有无数的亮点在闪闪发光。</p>
+        　　<p class="pbold">9、If there is anything you need, I will not be far away.</p>
+        　　<p>只要你需要，我就在这里。</p>
+        　　<p class="pbold">10、I am a man of my word.</p>
+        　　<p>我是信守承诺的人。</p>
+        　　<p class="pbold">11、There is one small step for a man,a giant leap for mankind.</p>
+        　　<p>某人的一小步就是人类的一大步。</p>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function wheel(el,callBack){
+            var fn = function(){
+                var e = arguments[0];
+                var w = e.wheelDelta || -e.detail;
+                if(!e.mark)e.mark = null;
+                if(w > 0){
+                    e.mark = true;
+                    return callBack.apply(el,arguments);
+                }else if(w < 0){
+                    e.mark = false;
+                    return callBack.apply(el,arguments);
+                };
+            };
+
+            if(el.onmousewheel === null){
+                el.onmousewheel = fn;
+            }else{
+                el.addEventListener('DOMMouseScroll',fn);
+            };
+
+        };
+
+        ~function($){
+            if(document.addEventListener){
+                $.bind = function(el,type,fn){
+                    el.addEventListener(type,fn);
+                    el['ev'+type] = el['ev'+type] || [];
+                    el['ev'+type].push(fn);
+                    return fn;
+                };
+
+                $.off = function(el,type,fn){
+                    if(typeof fn != 'undefined'){
+                        el.removeEventListener(type,fn);
+                    }else{
+                        el['ev'+type].forEach(function(item){
+                            el.removeEventListener(type,item);
+                        })
+                    }
+                };
+            }else{
+                $.bind = function(el,type,fn){
+                    var foo = function(){
+                        // 改变this指向 同时把event对象传递出去
+                        return fn.apply(el,arguments);
+                    };
+
+                    el.attachEvent('on'+type,foo);
+                    el['ev'+type] = el['ev'+type] || [];
+                    el['ev'+type].push(foo);
+                    return foo;
+                };
+
+                $.off = function(el,type,fn){
+                    if(typeof fn != 'undefined'){
+                        el.detachEvent('on'+type,fn);
+                    }else{
+                        el['ev'+type].forEach(function(item){
+                            el.detachEvent(type,item);
+                        });
+                    };
+                };
+            }
+        }(window);
+
+
+        /*
+            1. 拖拽事件
+                考虑一个方向 竖直
+            2. 点击事件
+                click会触发mousedown
+            3. 滚轮事件
+         */
+
+        var bar = document.getElementById("bar"),
+            content = document.getElementById("content"),
+            scrollBar = document.getElementById("scrollBar"),
+            overDom = document.getElementById("b_over"),
+            box = document.getElementById("box"),
+            maxH = scrollBar.offsetHeight - bar.offsetHeight,
+            conH = content.offsetHeight - maxH;
+
+        // 拖拽事件
+        bind(bar,'mousedown',function(e){
+            var e = e || window.event;
+            var y = e.pageY - this.offsetTop;
+            bind(document,'mousemove',function(e){
+                var e = e || window.event;
+                var ctop = e.pageY - y;
+                ctop = Math.min(ctop,maxH);
+                ctop = Math.max(0,ctop);
+                bar.style.top = ctop + 'px';
+                content.style.top = -(ctop / maxH) * conH + 'px';
+                // ctop / maxH = x / contentHeight
+            });
+
+            bind(document,'mouseup',function(){
+                off(document,'mousemove');
+                off(document,'mouseup');
+            });
+        });
+
+        // 点击事件
+        bind(overDom,'click',function(e){
+            var e = e || window.event;
+            var ctop = e.pageY - box.offsetTop - bar.offsetHeight;
+            ctop = Math.min(ctop,maxH);
+            ctop = Math.max(0,ctop);
+            bar.style.top = ctop + 'px';
+            content.style.top = -(ctop / maxH) * conH + 'px';
+        });
+
+        wheel(box,function(e){
+            e.preventDefault();
+            var barTop = bar.offsetTop;
+            if(e.mark){
+                barTop -= 20;
+            }else{
+                barTop += 20;
+            };
+
+            barTop = Math.min(barTop,maxH);
+            barTop = Math.max(0,barTop);
+            bar.style.top = barTop + 'px';
+            content.style.top = -(barTop / maxH) * conH + 'px';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #box{width: 100px;height: 100px;background: red;}
+    </style>
+</head>
+<body>
+    <div id="box"></div>
+    <div id="remove">解除</div>
+    <script>
+        /*
+            事件解绑定
+         */
+
+        var boxDom = document.getElementById("box");
+        var remove = document.getElementById("remove");
+
+
+        /*
+        ~function($){
+            if(document.addEventListener){
+                $.addEvent = function(el,type,callBack){
+                    el.addEventListener(type,callBack,false);
+                    el[type+'callBack'] = el[type+'callBack'] || [];
+                    el[type+'callBack'].push(callBack);
+                    return callBack;
+                }
+                $.off = function(el,type,fn){
+                    if(typeof fn != 'undefined'){
+                        el.removeEventListener(type,fn,false);
+                    }else{
+                        el[type+'callBack'].forEach(function(item){
+                            el.removeEventListener(type,item);
+                        })
+                    }
+                };
+            }else{
+                $.attachEvent = function(el,type,callBack){
+                    var bound = function(){
+                        return fn.apply(el,arguments);
+                    }
+                    el.attachEvent('on'+type,bound);
+                    return bound;
+                };
+                $.off = function(el,type,fn){
+                    el.detachEvent('on'+type,fn);
+                };
+            };
+        }(window);
+
+        var handel1 = addEvent(boxDom,'click',function(e){
+            alert(1);
+        });
+
+        var handel2 = addEvent(boxDom,'click',function(e){
+            alert(2);
+        });
+
+        remove.onclick = function(){
+            alert('解除啦')
+            off(boxDom,'click');
+        };
+        */
+
+
+        /*
+        function addEvent(el,type,callBack){
+            var fn = function(arg,e){
+                el['ev'+type] = el['ev'+type] || [];
+                el['ev'+type].push(arg);
+                callBack.call(el,e);
+            };
+            if(el.addEventListener){
+                el.addEventListener(type,function(e){
+                    fn(arguments.callee,e);
+                });
+            }else{
+                el.attachEvent('on'+type,function(e){
+                    fn(arguments.callee,e);
+                });
+            };
+        };
+
+        function off(el,type){
+            var evArr = el['ev'+type];
+            if(!evArr)return;
+            if(el.removeEventListener){
+                evArr.forEach(function(item,index){
+                    el.removeEventListener(type,item);
+                });
+            }else{
+                evArr.forEach(function(item,index){
+                    el.detachEvent(type,item);
+                });
+            }
+        };
+
+        addEvent(boxDom,'click',function(e){
+            alert(1);
+        });
+
+        addEvent(boxDom,'click',function(e){
+            alert(1);
+        });
+
+        remove.onclick = function(){
+            alert('解除啦')
+            off(boxDom,'click')
+        };
+        */
+
+    </script>
+</body>
+</html>

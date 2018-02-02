@@ -1,0 +1,303 @@
+/**
+ * event.js
+ * @authors xq (zbw930619@sina.com)
+ * @date    2017-10-24 22:52:01
+ * @version $Id$
+ */
+
+
+/**
+ *
+ * 规范event
+ * @param  {[type]} event [event对象]
+ * @return {[type]}       [event对象]
+ */
+function fixEvent(event){
+    var returnTrue = () => true;
+    var returnFalse = () => false;
+
+    // 测试是否需要修复
+    // if(!event || !event.stopPropagation){
+        var old = event || window.event;
+    // }
+
+    // clone old expando new event Object
+    event = {};
+    for(var prop in old){
+        event[prop] = old[prop];
+    };
+
+    // event occurred on this element
+    if(!event.target){
+        event.target = event.srcElement || document;
+    }
+
+    // default borwser action
+    event.preventDefault = () =>{
+        event.returnValue = false;
+        event.isDefaultPrevented = returnTrue;
+    };
+    event.isDefaultPrevented = returnFalse;
+
+    // bubble
+    event.stopPropagation = () =>{
+        event.cancelBubble = true;
+        event.isPropagationStopped = returnTrue;
+    };
+    event.isPropagationStopped = returnFalse;
+
+    event.stopImmediatePropagation = () =>{
+        event.isImmediatePropagationStopped = returnTrue;
+        event.stopPropagation();
+    }
+    event.isImmediatePropagationStopped = returnFalse;
+
+    // mouse position
+    if(event.clientX != null){
+        var doc = document.documentElement, body = document.body;
+        event.pageX = event.clientX +
+                    (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
+                    (doc && doc.clientLeft || body && body.clientLeft || 0);
+
+        event.pageY = event.clientY +
+                    (doc && doc.scrollTop || body && body.scrollTop || 0) -
+                    (doc && doc.clientTop || body && body.clientTop || 0);
+    }
+
+    // handle key press
+    event.which = event.charCode || event.keyCode;
+
+    // button for mouse click
+    // 0--left 1--middle 2--right
+    if(event.button != null){
+        event.button = (event & 1 ? 0 :
+                            (event.button & 4 ? 1 :
+                                (event.button & 2 ? 2 : 0)));
+    }
+    return event;
+}
+
+
+
+/**
+ * [description]
+ * 集中存储相关的DOM信息
+ * cache       保存和元素相关联的数据
+ * guidCounter 一个用于生成元素GUID的计数器
+ * expando     一个属性名称,做为元素的GUID储存,添加时间戳,避免与用户定义的名称冲突
+ * expando 释义 自定义属性
+ * @return {[type]} [description]
+ */
+(function(){
+    // 创建作用域存储对象
+    var cache = {},
+        guidCounter = 1,
+        expando = "data" + (new Date).getTime();
+
+    // 定义getData函数
+    this.getData = function(elem){
+        var guid = elem[expando];
+        if(!guid){
+            guid = elem[expando] = guidCounter++;
+            cache[guid] = {};
+        }
+        // 创建对象
+        return cache[guid];
+    };
+
+    // 定义removeData函数
+    this.removeData = function(elem){
+        var guid = elem[expando];
+        if(!guid) return;
+        delete cache[guid];
+        try {
+            delete elem[expando];
+        }
+        catch (e){
+            if(elem.removeAttribute){
+                elem.removeAttribute(expando);
+            };
+        };
+    }
+})();
+
+
+/**
+ * [description]
+ * 事件绑定处理函数
+ *
+ * 设计思路
+ * 1. 获取元素的相关数据块
+ * 2. 初始化 处理程序的存储 而不是预设值
+ * 3. 对应标记每一个进入处理程序的函数 ( 为了后边解绑特定函数 )
+ * 4. ### 创建事件调度器 一个对象特定type都有一个调度器 特定type的注册事件都会添加到对应的调度器中
+ * 5. 遍历处理程序的存储中的处理程序函数 绑定事件
+ *
+ * @return {[type]} [description]
+ */
+
+~function(){
+    var nextGuid = 1;
+    this.addEvent = function(el, type, fn){
+        // 获取相关的数据块
+        var data = getData(el);
+
+        // 创建处理程序的存储
+        !data.handlers && (data.handlers = {});
+        // 使用type创建对应数组
+        !data.handlers[type] && (data.handlers[type] = []);
+        // 标记函数
+        !fn.guid && (fn.guid = nextGuid++);
+        // 添加到列表中
+        data.handlers[type].push(fn);
+
+        // 创建事件调度器
+        if(!data.dispatcher){
+            data.disabled = false;
+
+            // 一个对象仅有一个 事件调度器
+            data.dispatcher = function(event){
+                if(data.disabled) return;
+                event = fixEvent(event);
+                // 调用注册的程序
+                var handlers = data.handlers[event.type];
+
+                // 循环 添加到调度器中 准备放入绑定事件中
+                if(handlers){
+                    for(var i = 0,len = handlers.length; i < len; i++){
+                        handlers[i].call(el, event);
+                    }
+                }
+            };
+        }
+
+        if(data.handlers[type].length === 1){
+            if(document.addEventListener){
+                el.addEventListener(type, data.dispatcher, false);
+            }else{
+                el.attachEvent('on'+type, data.dispatcher);
+            }
+        }
+    };
+}();
+
+
+/**
+ * [tidyUp description]
+ * clearFunction
+ * 在创建绑定事件的 使用的是委托事件处理程序完成的 不是直接解绑
+ * 但是在绑定的过程中 进行了很多的初始化工作 并不是预设值 因此事
+ * 件解除之后 同样需要把这些不必要存在的数据进行清理
+ *
+ * 设计思路
+ * 1. 清理特定type存储
+ * 2. 当特定type删除为空 需要把data.handlers 处理程序的储存 清理
+ * 3. getData(dom) dom节点上的信息需要清理干净
+ *
+ * @param  {[object]} el   [对象元素]
+ * @param  {[string]} type [特定事件类型]
+ * @return {[type]}      [description]
+ */
+function tidyUp(el, type){
+
+    // 空对象判断
+    var isEmpty = function(obj){
+        // !Array.isArray(obj) && return;
+        for(var k in obj){
+            return false;
+        };
+        return true;
+    };
+
+    // 获取对象的数据信息
+    var data = getData(el);
+    // 检测某一个事件类型的处理程序 是否被删除
+    if( data.handlers[type].length === 0){
+        // 为0 就删除处理程序
+        delete data.handlers[type];
+
+        if(document.removeEventListener){
+            // 打印 特定type 调度器
+            // console.log(data.dispatcher);
+            el.removeEventListener(type, data.dispatcher, false);
+        }else{
+            el.detachEvent('on'+type, data.dispatcher);
+        }
+    }
+
+    // 伴随着特性事件类型处理程序数组 最后可能是一个空数组 --> 删除
+    // 伴随着数组的删除 handlers可能也是一个空对象 --> 删除
+    // 同时也不需要委托函数 一并删除
+    if(isEmpty(data.handlers)){
+        delete data.handlers;
+        delete data.dispatcher;
+    }
+
+    // 测试删除的操作 改元素上的相关数据无意义了 删除
+    if(isEmpty(data)){
+        removeData(el);
+    }
+};
+
+
+/**
+ * [description]
+ * 解绑定事件处理函数
+ *
+ * 设计思路
+ * 1. 将一个元素所有的绑定事件解除
+ *      removeEvent(obj)
+ * 2. 将一个元素特定的类型所有事件解除
+ *      removeEvent(obj, 'click')
+ * 3. 将一个元素特定的处理程序接触
+ *      removeEvent(obj, 'click', handel)
+ * 很重要的一点 因为允许了可变长度的参数列表 并没有使用不定参去判断
+ * 而是逐个的检测参数是否提供 执行不同的操作 不是可选项
+ * 通过返回多次return (PS: 不是很习惯 多数喜欢控制流 返回一个return 或者策略模式控制)
+ * @return {[type]} [description]
+ */
+~function(){
+    this.removeEvent = function(el, type, fn){
+
+        // 获取对象相关数据信息
+        var data = getData(el);
+
+        if(!data.handlers) return;
+
+        // 创建一个实用函数
+        var removeType = function(t){
+            data.handlers[t] = [];
+            tidyUp(el, t);
+        };
+
+        // 1. 第一种设定
+        // 没有传递type 则删除所有的处理程序
+        if(!type) {
+            for(var t in data.handlers) removeType(t);
+            return;
+        };
+
+        // 查找特定的type的所有程序
+        var handlers = data.handlers[type];
+        if(!handlers)return;
+
+        // 2. 第二种设定
+        // 没有传递fn 则删除特定的type
+        if(!fn){
+            removeType(type);
+            return;
+        }
+
+        // 3. 第三种设定
+        // 删除特定的处理程序
+        if(fn.guid){
+            for(var i = 0,len = handlers.length; i < len; i++){
+                if(handlers[i].guid === fn.guid){
+                    handlers.splice(i, 1);
+                    // handlers.splice(fn.guid-1, 1);
+                };
+            };
+        };
+        tidyUp(el, type);
+    };
+}();

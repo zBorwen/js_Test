@@ -1,0 +1,11 @@
+.container{
+  width:100%;
+}
+.img-area{
+  height:600px;
+  text-align: center
+}
+.img-area img{
+    width: 960px;
+    height: 480px;
+}

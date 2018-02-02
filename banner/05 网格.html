@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;color: #333;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: "微软雅黑";}
+        #list{margin: 50px auto;border: 1px solid #333;border-top:0;border-left: 0;overflow: hidden;}
+        #list li{float: left;border: 1px solid #333;border-bottom: 0;border-right: 0;}
+    </style>
+</head>
+<body>
+    <ul id="list">
+
+    </ul>
+    <script src="jquery.js"></script>
+    <script type="text/javascript">
+        /*
+            螺纹算法
+                看拐点
+         */
+
+        var num = 5,
+            len = num * num,
+            size = 50,
+            row = 0,
+            col = 0,
+            min = 0,
+            max = num - 1;
+
+        $('#list').css({
+            width: num*(size+1),
+            height: num*(size+1)
+        })
+        for(var i=0;i<len;i++){
+            $('<li></li>').css({
+                width: size,
+                height:size
+            }).appendTo($('#list'));
+        };
+
+
+        // 0 --- 4 4 -- 9  9 -- 14  14 --- 19 19 --- 24  差值 num
+        // for(var j=0;j<len;j++){
+        //     $('#list').find('li').eq(row*num+col).html(j);
+        //     // 第一圈
+        //     // 第一个拐点 row = min, col增加
+        //     if(row === min && col < max){
+        //         col += 1;
+        //     }else if(col === max && row < max){
+        //         row += 1;
+        //     }else if( row === max && col > min){
+        //         col -= 1;
+        //     }else if(col === min && row > min){
+        //         row -= 1;
+        //     };
+
+        //     if( (row-1)==min && col == min){
+        //         min += 1;
+        //         max -= 1;
+        //     }
+        // };
+
+        var index = 0;
+        var timer = setInterval(function(){
+            $('#list').find('li').eq(row*num+col).html(index);
+            // 第一圈
+            // 第一个拐点 row = min, col增加
+            if(row === min && col < max){
+                col += 1;
+            }else if(col === max && row < max){
+                row += 1;
+            }else if( row === max && col > min){
+                col -= 1;
+            }else if(col === min && row > min){
+                row -= 1;
+            };
+
+            if( (row-1)==min && col == min){
+                min += 1;
+                max -= 1;
+            }
+
+            index++;
+            if(index === len){
+                clearInterval(timer)
+            }
+        },30);
+
+    </script>
+</body>
+</html>

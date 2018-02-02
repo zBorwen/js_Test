@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: "微软雅黑";}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        /*
+            dispatchEvent是作为高级浏览器(如chrome、Firfox等)的事件触发器来使用的，
+            那么什么是事件触发器？
+            就是触发事件的东西。可能有人觉得有点莫名其妙，触发事件不是在交互中被触发的吗？
+            的确，通常情况下，事件的触发都是由用户的行为如点击、刷新等操作实现，
+            但是，其实有的情况下，事件的触发必须又程序来实现，比如ajax框架的一些自定义事件。
+            正如事件的绑定一样，
+            对于浏览器而言，绑定事件分为高级浏览器和IE浏览器两派，
+            事件触发器也是分为,高级浏览器和IE两派，
+            而dispatchEvent正是用于高级浏览器的事件触发。
+         */
+
+        // 非IE
+        //创建xq的事件对象实例。
+        var xq = document.createEvent('HTMLEvents');
+        // 初始化xq对象事件
+        // 3个参数：事件名称，是否冒泡，是否阻止浏览器的默认行为
+        xq.initEvent("hello", true, true);
+        /*属性，随便自己定义*/
+        xq.mingzi = 'hello,我是李小贱';
+        xq.message = '我今天24岁';
+
+        //document上绑定自定义事件oneating
+        document.addEventListener('hello', function (event) {
+            alert(xq.mingzi+'，'+xq.message);
+        }, false);
+
+
+        // trigger实现
+        //触发自定义事件oneating
+        document.dispatchEvent(xq);
+
+
+
+        // IE
+        // document.creatEventObject()是IE创建event对象实例的方法，和document.creatEvent('HTMLEvents')在非IE主流浏览器下的作用相同，fireEvent是IE下的事件触发器，与dispatchEvent在非IE主流浏览器下作用相同。
+        var fireEvent = function(element,event){
+            if (document.createEventObject){
+                // IE浏览器支持fireEvent方法
+                var evt = document.createEventObject();
+                return element.fireEvent('on'+event,evt)
+            }else{
+                // 其他标准浏览器使用dispatchEvent方法
+                var evt = document.createEvent( 'HTMLEvents' );
+                evt.initEvent(event, true, true);
+                return element.dispatchEvent(evt);
+            }
+        };
+    </script>
+</body>
+</html>

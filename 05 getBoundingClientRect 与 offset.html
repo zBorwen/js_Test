@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;color: #333;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: '微软雅黑';height: 1400px;}
+        #box{width: 300px;height: 300px;background: red;position: relative;top: 500px;left: 200px;}
+        #xq{position: absolute;width: 100px;height: 100px;background: green;border: 5px solid red;margin-top: 5px;}
+    </style>
+</head>
+<body style="border: 5px solid #333">
+    <div id="box">
+        <div id="xq"></div>
+    </div>
+    <script type="text/javascript">
+        // 一个元素顶部边框的宽度（以像素表示）。不包括顶部外边距或内边距。clientTop 是只读的。
+        // pageXOffset 和 pageYOffset 属性返回文档在窗口左上角水平和垂直方向滚动的像素。
+        // pageXOffset 和 pageYOffset 属性相等于 scrollX 和 scrollY 属性。 window.pageXoffset/pageYoffset IE9+
+        // ie9- 可以使用 document.documentElement.scrollLeft 和 document.documentElement.scrollTop
+        // 在 HTML 中，HTML 文档本身始终是元素的 ownerDocument。 self
+        /*
+            滚动高度
+                谷歌  其他0
+                    document.body.scrollTop
+
+                IE    谷歌0  其它有值
+                    document.documentElement.scrollTop
+        */
+
+        var getOffsetPosition=function(elem){
+            if ( !elem ) return {left:0, top:0};
+            var top = 0, left = 0;
+            if ( "getBoundingClientRect" in document.documentElement ){
+                //jquery方法
+                var box = elem.getBoundingClientRect(),
+                    doc = elem.ownerDocument,
+                    body = doc.body,
+                    docElem = doc.documentElement,
+                    clientTop = docElem.clientTop || body.clientTop || 0,
+                    clientLeft = docElem.clientLeft || body.clientLeft || 0,
+                    top  = box.top  + (self.pageYOffset || docElem && docElem.scrollTop  || body.scrollTop ) - clientTop,
+                    left = box.left + (self.pageXOffset || docElem && docElem.scrollLeft || body.scrollLeft) - clientLeft;
+            }else{
+                do{
+                    top += elem.offsetTop || 0;
+                    left += elem.offsetLeft || 0;
+                    elem = elem.offsetParent;
+                } while (elem);
+            }
+            return {left:left, top:top};
+        }
+
+        var offset = function(ele){
+            if(!ele)return {left:0,top:0};
+            var top = 0,left = 0;
+            while(ele){
+                top += ele.offsetTop;
+                left += ele.offsetLeft;
+                ele = ele.offsetParent;
+            };
+            return {left:left, top:top};
+        }
+
+
+        function offsetxq(el,parent,position){
+            var pos = position || {top:0,left:0};
+            if(el == parent)return pos;
+            pos.top += el.offsetTop;
+            pos.left += el.offsetLeft;
+            return offsetxq(el.offsetParent,parent,pos);
+        };
+
+
+        var xq = document.getElementById("xq");
+        // console.log(getOffsetPosition(xq).top)
+        // console.log(offset(xq).top)
+        // console.log(xq.ownerDocument.body)
+        // console.log(self === window)
+        // console.log(xq.clientTop)
+        // console.log(offsetxq(xq).top)
+
+    //`pageYOffset` and `pageXOffset` are not supported in IE8 and before
+
+    // Return the current scrollbar offsets as the x and y properties of an object
+    function getScrollOffsets() {
+
+        // This works for all browsers except IE versions 8 and before
+        if ( window.pageXOffset != null )
+           return {
+               x: window.pageXOffset,
+               y: window.pageYOffset
+           };
+
+        // For browsers in Standards mode BackCompat/CSS1Compat
+        var doc = window.document;
+        if ( document.compatMode === "CSS1Compat" ) {
+            return {
+                x: doc.documentElement.scrollLeft,
+                y: doc.documentElement.scrollTop
+            };
+        }
+
+        // For browsers in Quirks mode
+        return {
+            x: doc.body.scrollLeft,
+            y: doc.body.scrollTop
+        };
+
+        // x = window.pageXOffset || doc.documentElement.scrollLeft || doc.body.scrollLeft;
+        // y = window.pageYOffset || doc.documentElement.scrollTop || doc.body.scrollTop;
+    }
+    </script>
+</body>
+</html>

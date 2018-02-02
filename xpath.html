@@ -1,0 +1,86 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;}
+        ul,li{list-style: none;}
+        body{font-family: "微软雅黑";}
+    </style>
+</head>
+<body>
+    <div xq></div>
+    <div xqq></div>
+    <div xqqq></div>
+
+
+    <div id="xq">
+        <p>p</p>
+        <ul>
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+        </ul>
+    </div>
+    <script type="text/javascript">
+        /*
+            在试图找到特定的节点, 或者某个节点的子集的时
+            应该使用内置的方法和 DOM 集合来缩小搜索范围，使之在尽可能少的节点内进行搜索. 如果你想在文档中找到一个具有某个特定属性的未知的元素
+        */
+
+        // 方式1
+        var allDoms = document.getElementsByTagName("*");
+        for(var i=0;i<allDoms.length;i++){
+            if(allDoms[i].hasAttribute("xq")){
+                // console.log(allDoms[i])
+            }
+        }
+
+        // 方式2
+        // console.log(document.querySelector("div[xq]"));
+
+        // 方式3 DOM 2 Traversal  nextNode() previousNode()
+        var body = document.getElementsByTagName("body")[0];
+        // 创建过滤器filter 表示接受或者跳过某种特定的节点
+        var filter = {
+            acceptNode: function(node){
+                return node.hasAttribute("xq") ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+            }
+        };
+        // 创建迭代器
+        var iterator = document.createNodeIterator(body, NodeFilter.SHOW_ELEMENT, filter, false);
+        var node = iterator.nextNode();
+        while(node !== null){
+            // console.log(node);
+            node = iterator.nextNode();
+        }
+
+        // TreeWalker  firstChild() nextSibling() previousSibling()  walker.currentNode = document.body
+        var walker = document.createTreeWalker(body, NodeFilter.SHOW_ELEMENT, filter, false);
+        var nodee = walker.nextNode();
+        while(nodee !== null){
+            // console.log(nodee);
+            nodee = iterator.nextNode();
+        }
+
+
+        // 遍历 li
+        var walker2 = document.createTreeWalker(xq, NodeFilter.SHOW_ELEMENT, null, false);
+        // walker2.firstChild();
+        // walker2.nextSibling();
+        // var node2 = walker2.firstChild();
+
+        var node2 = walker2.nextNode();
+        while(node2 !== null){
+            console.log(node2);
+            // node2 = walker2.nextSibling();
+            node2 = walker2.nextNode();
+        }
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: "微软雅黑";}
+        #box{width: 100px;height: 100px;background: red}
+        #box1{width: 100px;height: 100px;background: red}
+    </style>
+</head>
+<body>
+    <div id="box"></div>
+
+    <div id="box1"></div>
+    <script type="text/javascript">
+        /*
+            window.IntersectionObserver 交叉观察器
+
+            创建的观察者实例
+            new IntersectionObserve(callBack,option);
+            参数
+            callBack 目标元素的可见性变化时，就会调用观察器的回调函数callback
+                callBack中有一个参数 entries(Array) 用来存放 IntersectionObserverEntry对象
+
+                IntersectionObserverEntry对象有以下属性
+                    boundingClientRect
+                        目标元素的矩形区域的信息
+
+                    intersectionRatio
+                        目标元素的可见比例，即intersectionRect占boundingClientRect的比例值
+                        完全可见时为          intersectionRect/boundingClientRect > 1
+                        完全不可见时小于等于  intersectionRect/boundingClientRect <= 0
+
+                    intersectionRect
+                        返回一个 DOMRectReadOnly 用来描述根和目标元素的相交区域.
+                        目标元素与视口(或根元素)的交叉区域的信息
+
+                    isIntersecting
+                        返回一个布尔值,如果目标元素与交叉区域观察者对象(intersection observer)的根相交,则返回true.
+                        如果返回 true,交叉时的状态.
+                        如果返回false,变换是从交叉状态到非交叉状态.
+
+                    rootBounds
+                        根元素的矩形区域的信息,getBoundingClientRect()方法的返回值
+                        如果没有根元素(即直接相对视口滚动),返回null
+
+                    target
+                        被观察的对象
+
+                    time
+                        返回一个记录从IntersectionObserver的时间原点到交叉被触发的时间的时间戳.
+                        可见变化时间,单位毫秒
+
+                option
+
+            实例的的 observe(ele) 方法用来观察DOM节点
+
+        */
+        var boxDom = document.getElementById("box");
+        var boxDom1 = document.getElementById("box1");
+        var io = new IntersectionObserver(function(entry){
+            // entry是一个数组用来存放 监听对象IntersectionObserverEntry
+            console.log(entry);
+        });
+
+        // 开始
+        io.observe(boxDom);
+        io.observe(boxDom1);
+        // 停止
+        // io.unobserve(boxDom);
+        // 关闭
+        io.disconnect();
+
+
+
+        var a = 3;
+        var b = 4;
+        var x = 3;
+        // if(x == a){
+        //     x = b;
+        // }else if(x == b){
+        //     x = a;
+        // }
+        // toggle 两个值
+        x = a ^ b ^ x;
+        console.log(x);
+
+        // 取整
+        var num = 4.8;
+        console.log(Math.floor(num));
+        console.log(num|0);
+        console.log(~~num);
+    </script>
+</body>
+</html>

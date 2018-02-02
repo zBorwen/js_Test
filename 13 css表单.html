@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: "微软雅黑";}
+        .container{width: 400px;margin: 100px auto;border: 1px solid green;padding: 20px 80px;}
+        input:invalid{border: 1px solid tomato;box-shadow: inset 3px 0 0 red;}
+        input:required{background: #FBFBF2;}
+        input{width: 180px;height: 30px;border: none;outline: none;border: 1px solid #999;border-radius:0 4px 4px 0; text-indent: 45px;transition: .5s all}
+
+        input:valid{box-shadow: inset 3px 0 0 green;border-color: green}
+        input:valid ~label::after {content: "bingo";margin-left: 5px;}
+        input:invalid ~label::after {content: "oh,no";margin-left: 5px;}
+
+        .group{position: relative;margin-top: 15px;}
+        span.title{position: absolute;left: 7px;line-height: 32px;color: #333;transition: .5s all}
+
+        input:hover{
+          text-indent: .5em;
+        }
+        input:hover+span.title{
+          transform:translateX(-130%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="group">
+            <input type="text" required placeholder="请输入一个名字" />
+            <span class="title">昵称 </span>
+            <label for="text"></label>
+        </div>
+
+        <div class="group">
+            <input type="password" required placeholder="请输入一个密码" />
+            <span class="title">密码 </span>
+            <label for="password"></label>
+        </div>
+
+        <div class="group">
+            <input type="email" required placeholder="请输入一个邮箱" />
+            <span class="title">邮箱 </span>
+            <label for="email"></label>
+        </div>
+
+        <div class="group">
+            <input type="tel" required placeholder="请输入一个号码" pattern="^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$" />
+            <span class="title">手机 </span>
+            <label for="tel"></label>
+        </div>
+    </div>
+    <script type="text/javascript">
+
+
+    </script>
+</body>
+</html>
