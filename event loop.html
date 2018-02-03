@@ -13,7 +13,6 @@
             console.log('timer a');
         }, 0)
 
-        // 1
         for(var j = 0; j < 5; j++){
             console.log(j);
         }
@@ -32,7 +31,6 @@
             console.log('click');
         })
 
-        // 2
         console.log('click begin');
         waitFiveSeconds();
         */
@@ -65,6 +63,7 @@
         console.log('代码执行结束');
          */
 
+        // 时间决定推入主栈时机
         for(var i=0;i<10e7;i++){}
         setTimeout(_=>{console.log("1")},2000)
         setTimeout(_=>{console.log("2")},0)
