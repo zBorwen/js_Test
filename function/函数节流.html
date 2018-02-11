@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: "微软雅黑";}
+        #box{width: 100px;height: 100px;background-color: red;}
+    </style>
+</head>
+<body>
+    <div id="demo" style="position:absolute;  width:200px; height:200px; background:#CC0000;left: 200px;top: 200px;"></div>
+    <div id="box"></div>
+    <script type="text/javascript">
+        // 判断ie
+        // alert(!-[1,])
+
+        var $ = document.getElementById.bind(document);
+
+        /*
+
+            函数节流
+
+            var count = 0;
+            var boxDom = $('box');
+
+            function fn(){
+                console.log('conut: '+count++)
+            }
+
+            var throttle = function(fn,delay=400){
+                var timer = null,previous = null;
+                return function(){
+                    var now = Date.now(),args = arguments,context = this;
+                    if(!previous)previous = now;
+                    var remaining = now - previous;
+                    if(delay && remaining >= delay){
+                        fn.apply(context,args);
+                        // 重置时间把上一次的时间做为本次结束时间
+                        previous = now;
+                        clearTimeout(timer);
+                    }else{
+                        clearTimeout(timer);
+                        timer = setTimeout(function(){
+                            fn.apply(context,args);
+                            previous = null;
+                        },delay);
+                    }
+                };
+            }
+
+            boxDom.onclick = throttle(fn,500);
+
+
+            var throttle = function(fn,delay=200,mustDelay=300){
+                var timer = null,previous = null;
+                return function(){
+                    var now = Date.now(),args = arguments,context = this;
+                    clearTimeout(timer);
+                    // 上次操作是否存在 不存在当前时间就是触发时间
+                    if(!previous)previous = now;
+
+                    // 如果当前时间 - 上一次触发时间>mustDelay,触发事件
+                    var remaining = now - previous;
+                    if(remaining >= mustDelay){
+                        fn.apply(context,args);
+                        previous = now;
+                    }else{
+                        // 否则 延迟执行
+                        timer = setTimeout(function(){
+                            fn.apply(context,args);
+                        },delay);
+                    }
+                };
+            }
+        */
+
+
+    </script>
+</body>
+</html>

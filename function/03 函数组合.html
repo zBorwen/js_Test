@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: "微软雅黑";}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        /*
+                函数的组合 代码更加可读 传统的函数从内往外执行 组合之后从左往右执行
+
+                一个简单的需求
+                1. 输入Kevin 打印HELLO KEVIN
+
+        */
+
+        /*
+            // 通过组合的形式
+            // 1. 转大写
+            var upper = function(x){
+                return x.toUpperCase();
+            };
+
+            // 2. 拼接
+            var hello = function(x){
+                return 'HELLO, ' + x
+            };
+
+            // 3. 整合输出
+            // var greet = function(x){
+            //     return hello(upper(x));
+            // };
+
+            // console.log(greet('Kevin'));
+
+
+
+            // 进一步优化一下  创建一个compose函数
+            // compose 将两个函数组合成一个函数，让代码从右向左运行，而不是由内而外运行，可读性大大提升。这便是函数组合
+            var compose = function(f,g){
+                return function(x){
+                    return f(g(x));
+                };
+            };
+
+
+            // 现在这个需求没有过多的组合 如果有更多的步骤就需要更多的参数了  compose(d, c, b, a)
+            var greet = compose(hello,upper);
+            console.log(greet('Kevin'));
+        */
+
+
+
+        // 参照 underscore中compose的实现  f(g(e(x)))  --->  compose(f,g,e)
+        function compose() {
+            // 函数参数
+            var args = arguments;
+            // 最后一个索引
+            var start = args.length - 1;
+            // 返回 组合的函数 eg: compose(hello,upper)
+            return function(){
+                var i = start;
+                var result = args[start].apply(null, arguments);
+                while (i--) result = args[i].call(this, result);
+                return result;
+            };
+        };
+
+        var upper = function(x){
+            return x.toUpperCase();
+        };
+
+        var hello = function(x){
+            return 'HELLO, ' + x
+        };
+
+        var greet = compose(hello,upper);
+        console.log(greet('Kevin'));
+    </script>
+</body>
+</html>

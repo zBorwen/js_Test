@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: "微软雅黑";}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+
+
+        var res = ['1','2','3'].map(function(item){
+            return item*2+'';
+        }).reduce(function(prev,cur){
+            return prev + ':' + cur;
+        });
+
+        // console.log(res);
+
+        // 把这个map的匿名函数取出
+        var cj = function(a,b){
+            return a*b+'';
+        }
+        var bar = function(arr,num){
+            return arr.map(function(item){
+                return cj(item,num)
+            }).reduce(function(prev,cur){
+                return prev.concat(cur)
+            })
+        };
+        // 这个地方的2其实不是很好读 相比
+        console.log(bar(['1','2','3'],2));
+
+        var multiple = function(a){
+            return function(b){
+                return b*a + ''
+            }
+        }
+
+        var plus = function(a){
+            return function(b){
+                return (+b)+a + ''
+            }
+        }
+        var concatArray = function(chars, stylishChar){
+            return chars.map(stylishChar).reduce(function(a,b){
+                return a.concat(b);
+            });
+        }
+
+        // console.log(concatArray(['1','2','3'], multiple(2)))
+        // console.log(concatArray(['1','2','3'], plus(2)))
+
+
+        var str1 = 'a';
+        var str2 = 'b';
+    </script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: "微软雅黑";}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        /*
+                函数做为javascript一等公民 一定要明确的是函数是一个数据类型 特殊在可以打括号执行
+                因此函数可以做为参数传递 我们常说的神奇的回调函数callBack
+
+                函数内部是一个独立的作用域 外部无法访问内部的变量
+                谈到作用域 我们要了解的几个点
+                1. javascript执行分为两个阶段 编译阶段 执行阶段 编译阶段涉及到一个点 变量的提升函数定义式的提升 进入到一个新的环境同样执行者两个阶段
+                2. 全局和局部 局部的变量一定要记得加var 切记
+                3. 作用域链
+
+                javascript中有一个ECS(Execution context stack)栈来管理执行上下文
+                类似一个数组[] 当一个函数执行的时候 会被压入栈内执行 执行完毕之后将其从上下文弹出
+                ECS = [
+                    'globalContext' // 最底层始终有一个全局
+                ]
+
+
+                看一下这个的运行过程
+                function fn1(){
+                    console.log('xq');
+                }
+
+                function fn2(){
+                    fn1();
+                };
+
+                function fn3(){
+                    fn2();
+                }
+
+                fn3();
+
+                模拟ECS管理函数执行的上下文
+
+                // fn3执行
+                ECS.push(fun3,fun3-context);
+                // 调用fn3其中有fn2
+                ECS.push(fun2,fun2-context);
+                // 调用fn2,其中有fn1
+                ECS.push(fun1,fun1-context);
+
+                // 弹出阶段
+                // fn1 执行完毕
+                ECS.pop()
+                // fn2 执行完毕
+                ECS.pop()
+                // fn3 执行完毕
+                ECS.pop()
+         */
+
+        // 思考题
+        /*
+            var str = 'globalText';
+            function fn(){
+                var str = 'localText';
+                function log(){
+                    console.log(str);
+                };
+                return log();
+            };
+            console.log(fn());
+
+
+            模拟(Execution context stack)ECS过程
+
+            // fn执行
+            ECS.push(fn,fnContext)
+            // log执行
+            ECS.push(log,logContext)
+            // log执行完毕 弹出
+            ECS.pop()
+            // fn执行完毕 弹出
+            ECS.pop()
+
+         */
+
+        /*
+            var str = 'globalText';
+            function fn(){
+                var str = 'localText';
+                function log(){
+                    console.log(str);
+                };
+                return log;
+            };
+            console.log(fn()());
+
+
+            模拟(Execution context stack)ECS过程
+            // fn执行
+            ECS.push(fn,fnContext)
+            // fn执行完毕 弹出
+            ECS.pop()
+
+            // log执行
+            ECS.push(log,logContext)
+            // log执行完毕 弹出
+            ECS.pop()
+         */
+
+
+        /*
+            上边的思考题 答案是一样的都是localText 现在我们来看一下 函数的上下文
+
+            对于每一个执行的上下文,都有三个重要属性
+            变量对象(Variable object，VO)
+            作用域链(Scope chain)
+            this
+
+            函数上下文
+            变量对象Variable object(VO)来表示 , 函数代码被执行之前，vo就已经创建好
+            活动对象activation object(AO)来表示 , 执行一个函数上下文会被激活
+
+            变量对象的创建过程
+            全局上下文的变量对象初始化是全局对象
+
+            函数上下文的变量对象初始化只包括 Arguments 对象
+
+            在进入执行上下文时会给变量对象添加形参、函数声明、变量声明等初始的属性值 (没有var的不会被添加到AO中)
+
+            在代码执行阶段，会再次修改变量对象的属性值
+
+            function fn(x){
+                var a = 1;
+                function b(){
+
+                }
+                var c = function(){
+
+                }
+                a = 2;
+            }
+
+            VO = {
+                a: undefined,
+                b: reference to function c(){},
+                c: undefined
+            }
+
+            AO = {
+                arguments: {
+                    0: 1,
+                    length: 1
+                },
+                x = 1,
+                a:2,
+                b: reference to function c(){},
+                c: reference to FunctionExpression "d"
+            }
+
+
+            思考题:
+            function fn(){
+                console.log(a);
+                a = 1;
+            }
+            fn(); // 报错
+
+
+            这里容易误解成为undefined 报错 Uncaught ReferenceError: a is not defined
+            因为 在函数中a并没有通过 var声明 并没有被添加到 AO 中 此时全局的对象也没有添加 a 找不到undefined报错ReferenceError
+            执行的时候
+            AO = {
+                arguments: {
+                    length:0
+                }
+            }
+
+
+            function fn(){
+                a = 1;
+                console.log(a);
+            }
+            fn(); // 1
+
+            执行
+            AO = {
+                arguments: {
+                    length:0
+                }
+            }
+            全局对象被赋值了 a = 1 此时按照作用域链去查找 找到全局有一个a属性值为1
+
+
+
+            再来看一个例子
+
+            foo();  // TypeError foo is not a function
+            if(true){
+                function foo(){
+                    console.log('111');
+                }
+            }else{
+                function foo(){
+                    console.log('222');
+                }
+            }
+
+            这个问题其实是一个函数声明的问题 当函数出现在 代码块中不会被javascript引擎当作是函数定义表示,而是处理成函数表达式
+
+            上边的代码相当于
+            var foo;
+            foo();  // TypeError foo is not a function
+            if(true){
+                function foo(){
+                    console.log('111');
+                }
+            }else{
+                function foo(){
+                    console.log('222');
+                }
+            }
+
+            此时的
+            AO = {
+                foo: undefined
+            }
+
+            如果放到下边
+            AO = {
+                // 根据条件判断对foo赋值
+                foo: reference to function foo(){}
+            }
+
+            javascript 真的是一个奇怪的东西
+        */
+
+
+    </script>
+</body>
+</html>

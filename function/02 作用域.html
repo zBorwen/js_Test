@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content=" ">
+    <title>Document</title>
+    <style type="text/css">
+        *{margin: 0;padding: 0;}
+        a{text-decoration: none;color: #333;}
+        ul,li{list-style: none;}
+        body{font-size: 14px;font-family: "微软雅黑";}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        /*
+            有一个故事 鸡个鸡蛋的故事
+            到底是先有蛋还是先有鸡?
+            先有定义才执行
+
+            报的错误
+            undefined       定义了没有赋值
+            ReferenceError  (引用错误) 表明了一个不存在的变量被引用 产生了一个没有定义的东西
+            TypeError       (类型错误) 表示的这个值不是预期的类型
+
+            函数是一个数据类型
+        */
+
+        /*
+
+            作用域 javascript词法编译过程
+            变量提升的概念
+            局部作用域和全局作用域的概念
+            作用域链 当前的作用域可以访问到的一个范围
+
+            var a = 10; 习惯性会把这个声明看成一个过程,实际上javascript会把这个过程分成两个步骤
+            ①: var a;
+            ②: a = 10; a(); a++ a+=10
+            第一个阶段: 编译阶段 依次的找所有的定义  变量的定义,函数定义(有名函数)
+            ### 所有的定义都会被提升到当前作用域的顶端, 但是局部变量(函数内部)是不会被提升到当前作用域的顶端 , 当你函数执行的时候 内部的声明的过程都会被提升到当前作用域的顶端(我们进入到了一个新的空间执行过程还是编译阶段,执行阶段)
+            所谓的变量提升
+
+            第二个阶段: 执行阶段 依次的执行可以执行的代码 赋值操作 函数的执行 运算
+
+            我们平常所说的全局作用域 局部作用域 有一个参考点的
+
+            PS: 函数的表达式(匿名函数)不会被提升的,定义式(有名函数)会被提升
+
+            #### 函数和变量的名字 不要一样 否则会出现一些未知的错误
+
+        */
+
+        /*
+            javascript依次执行代码的时候
+            1. 找定义
+            2. 执行代码
+
+        */
+
+        // a = 10;
+        // var a;
+        // alert(a); // 10
+
+        // var a;
+        // a = 10;
+        // alert(a);
+
+        // alert(a);        // undefined
+        // var a = 10;
+        // alert(a);
+
+        // var a;
+        // alert(a);       // undefined
+        // a = 10;         // 初始化值10
+        // alert(a);       // 10
+
+
+
+        // alert(b);     // 错误 referenceError
+        // var a = 10;
+        // a();          // 错误 TypError
+
+        // a();          // TypeError a不是函数 undefined()
+        // 一般写函数表达式(匿名函数)的时候 后边的函数是不需要给名字
+        // var a = function xq(){
+        //     alert(xq)
+        // };
+        // a();
+        // alert(xq);
+        // xq();            // 引用错误 xq未定义 不存在
+
+
+        // fn();               // 1 没有错误
+        // function fn(){
+        //     alert(1);
+        // }
+        // // 函数的定义式 是一个直接声明过程 匿名函数函数表达式 是两个过程
+        // function fn(){alert(1)}
+        // fn();
+
+
+        // a();                    // TypeError
+        // var a = function(){
+        //     alert(1);
+        // }
+
+        // var a;
+        // a();
+        // a = function(){alert(1)}
+
+
+        // xq
+        // function xq(){
+        //     var a = 1;
+        // }
+        // xq()
+
+
+        // var a = b = c = 10;
+        // var a = 10,b=10,c=10
+        // var a = 10;
+        // b = 10;
+        // c = 10;
+
+        // alert(a);
+        // function a(){}
+        // var a = 10;
+        // alert(a);
+
+        // var a; // 忽略掉了
+        // function a(){}
+        // alert(a);
+        // a = 10;
+    </script>
+</body>
+</html>
