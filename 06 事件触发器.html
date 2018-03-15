@@ -36,14 +36,14 @@
         xq.message = '我今天24岁';
 
         //document上绑定自定义事件oneating
-        document.addEventListener('hello', function (event) {
-            alert(xq.mingzi+'，'+xq.message);
+        document.addEventListener('hello', function (e) {
+            alert(e.mingzi+'，'+e.message);
         }, false);
 
 
         // trigger实现
         //触发自定义事件oneating
-        document.dispatchEvent(xq);
+        // document.dispatchEvent(xq);
 
 
 
@@ -61,6 +61,9 @@
                 return element.dispatchEvent(evt);
             }
         };
+
+
+
     </script>
 </body>
 </html>

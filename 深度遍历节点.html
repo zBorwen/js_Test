@@ -79,49 +79,7 @@
         // console.log(getClass('a'));
         // console.log(getAttr("data-item", "haha"));
 
-        var index_ = 0;
-        function fibonacci(n){
-            console.log("index:"+ (++index_));
-            return n < 2 ? n : fibonacci(n-1) + fibonacci(n-2);
-        }
 
-        /**
-         * 0--> 1次
-         * 1--> 1次
-         * 2--> 3次 = 1 + 1 + 1
-         * 3--> 5次 = 1 + 3 + 1
-         * 4--> 9次 = 1+ 5 + 3
-         * 5--> 15次= 1+ 9 + 5
-         */
-        for(var i=0;i<=5;i++){
-            console.log(fibonacci(4));
-        }
-
-        /*
-            修改成为有缓存数据的
-                1. 可以缓存一个对象
-                2. 可以缓存一个数组
-                3. 利用闭包存储
-         */
-        var index = 0;
-        var cach_fibonacci = function(){
-            var cach = {0: 0, 1: 1};
-            var fib = function(n){
-                console.log("index:" + (++index));  // 29 次
-                var result = cach[n];
-                if(typeof result != 'number'){
-                    result = fib(n-1) + fib(n-2);
-                }
-                cach[n] = result;
-                return result;
-            }
-            return fib;
-        }();
-
-        // 0 1 1(2次) 2(3次) 3(3次) 4(3次) 5(3次)
-        for(var i=0;i<=5;i++){
-            // console.log(cach_fibonacci(i));
-        }
     </script>
 </body>
 </html>
