@@ -122,6 +122,22 @@ function checkObj(objAll,objList) {
 }*/
 
 
+function flattenDepth(array) {
+  let result = [];
+  array.forEach (item => {
+    if (Array.isArray(item)) {
+      result.push(...(flattenDepth(item)))
+    } else {
+      result.push(item);
+    }
+  });
+  return result;
+}
+
+// flattenDepth([1,[2,[3,[4,6,8,9]]]]);  // => [1, 2, 3, 4, 6, 8, 9, 5]
+console.log(flattenDepth([1,[2,3,[4]]]));
+
+
 function matrix(num){
     var arr = [];
     var row = [];
