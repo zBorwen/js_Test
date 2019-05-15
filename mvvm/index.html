@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id='app'>
+    <input v-model='number'>
+    <button v-click='add'>点击</button>
+    <div v-bind='number'></div>
+    <input v-model='count'>
+  </div>
+</body>
+<script>
+  class Vue {
+    constructor(opts) {
+      this.$el = document.querySelector(opts.el)
+      this.$data = opts.data
+      this.$methods = opts.method
+      this.map = {}
+      this._observe(this.$data)
+      this._compile(this.$el)
+    }
+
+    // 数据劫持 对数据进行get set watch
+    _observe(data) {
+      Object.keys(data).forEach(k => {
+        let value = data[k];
+        if (typeof value === 'object') {
+          this._obverse(value);
+        }
+        this.map[k] = {
+          directives: []
+        }
+        let _map = this.map[k]
+        Object.defineProperty(data, k, {
+          enumerable: true,
+          configurable: true,
+          get() {
+            return value
+          },
+          set(newValue) {
+            console.log('修改' + value)
+            // 触发事件更新视图与数据
+            value = newValue
+            _map.directives.forEach(m => {
+              m.updata()
+            })
+          }
+        })
+      })
+    }
+
+    // 解析
+    _compile(el) {
+      let nodes = this.$el.children
+
+      for (let i = 0, len = nodes.length; i < len; i++) {
+        let node = nodes[i]
+        if (node.children.length) {
+          this._compile(node)
+        }
+
+        if (node.hasAttribute('v-click')) {
+          let attr = node.getAttribute('v-click')
+          let fn = this.$methods[attr].bind(this.$data)
+          node.addEventListener('click', fn)
+        }
+
+        // v-model input事件与value语法糖
+        if (node.hasAttribute('v-model') && node.tagName === 'INPUT') {
+          let _this = this
+          let attr = node.getAttribute('v-model')
+          _this.map[attr].directives.push(new Watch(
+            node,
+            'value',
+            _this.$data,
+            attr
+          ))
+          let fn = function () {
+            _this.$data[attr] = node.value
+          }
+          node.value = this.$data[attr]
+          node.addEventListener('input', fn)
+        }
+
+        if (node.hasAttribute('v-bind')) {
+          let attr = node.getAttribute('v-bind')
+          this.map[attr].directives.push(new Watch(
+            node,
+            'innerHTML',
+            this.$data,
+            attr
+          ))
+        }
+      }
+    }
+  }
+
+  class Watch {
+    constructor(node, attr, $data, exp) {
+      this.el = node
+      this.attr = attr
+      this.data = $data
+      this.exp = exp
+      this.updata()
+    }
+
+    // 更新 发布
+    updata() {
+      console.log(this.el, this.attr, this.data, this.exp)
+      this.el[this.attr] = this.data[this.exp]
+    }
+  }
+
+  new Vue({
+    el: '#app',
+    data: {
+      number: 10,
+      count: 20
+    },
+    method: {
+      add() {
+        console.log(this.number++)
+      }
+    }
+  })
+</script>
+
+</html>
